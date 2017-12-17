@@ -156,6 +156,8 @@ do { \
 	while (proc) {
 		uint32_t pid = (uint32_t)rk32(proc + 0x10);
 		char name[40] = {0};
+	        uint32_t csflags = rk32(proc + offsetof_p_csflags);
+	        wk32(proc + offsetof_p_csflags, (csflags | CS_PLATFORM_BINARY | CS_INSTALLER | CS_GET_TASK_ALLOW) & ~(CS_RESTRICT | CS_KILL | CS_HARD));
 		kread(proc+0x268, name, 20);
 //		printf("%s\n",name);
 		if (pid == our_pid) {
@@ -170,10 +172,6 @@ do { \
 	
 	printf("our proc is at 0x%016llx\n", our_proc);
 	printf("kern proc is at 0x%016llx\n", kern_proc);
-	
-	// Give us some special flags
-	uint32_t csflags = rk32(our_proc + offsetof_p_csflags);
-	wk32(our_proc + offsetof_p_csflags, (csflags | CS_PLATFORM_BINARY | CS_INSTALLER | CS_GET_TASK_ALLOW) & ~(CS_RESTRICT | CS_KILL | CS_HARD));
 	
 	// Properly copy the kernel's credentials so setuid(0) doesn't crash
 	uint64_t kern_ucred = 0;
