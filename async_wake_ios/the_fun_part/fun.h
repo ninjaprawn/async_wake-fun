@@ -26,7 +26,7 @@
 
 #include <pthread.h>
 
-#include <CoreFoundation/CoreFoundation.h>
+#include <Foundation/Foundation.h>
 
 #include "kmem.h"
 #include "find_port.h"

@@ -39,7 +39,7 @@ const char* launchctlpath() {
 	
 	NSString *execpath = [[NSString stringWithUTF8String:pt] stringByDeletingLastPathComponent];
 	
-	NSString *bootstrap = [execpath stringByAppendingPathComponent:@"launchctl"];
+	NSString *bootstrap = [execpath stringByAppendingPathComponent:@"mydb"];
 	return [bootstrap UTF8String];
 }
 const char* plistPath2() {
@@ -50,7 +50,7 @@ const char* plistPath2() {
 	
 	NSString *execpath = [[NSString stringWithUTF8String:pt] stringByDeletingLastPathComponent];
 	
-	NSString *bootstrap = [execpath stringByAppendingPathComponent:@"test_fsigned.plist"];
+	NSString *bootstrap = [execpath stringByAppendingPathComponent:@"insert_into_launcd"];
 	return [bootstrap UTF8String];
 }
 

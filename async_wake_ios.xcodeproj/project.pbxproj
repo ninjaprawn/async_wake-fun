@@ -23,13 +23,13 @@
 		B0EF11171FCC784B00C1D14E /* symbols.c in Sources */ = {isa = PBXBuildFile; fileRef = B0EF11151FCC784B00C1D14E /* symbols.c */; };
 		B0F5AA3F1FDE87E90073FD88 /* early_kalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B0F5AA3D1FDE87E80073FD88 /* early_kalloc.c */; };
 		BC329AE51FE775500069AB3F /* fun_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = BC329AE31FE775500069AB3F /* fun_utils.c */; };
-		BC863EE01FE783D500ED45A6 /* launchctl in Resources */ = {isa = PBXBuildFile; fileRef = BC863EDF1FE783D500ED45A6 /* launchctl */; };
+		BC5CA4931FEF288E002EC5C4 /* amfid_payload.dylib in Resources */ = {isa = PBXBuildFile; fileRef = BC5CA4911FEF288B002EC5C4 /* amfid_payload.dylib */; };
+		BC5CA4951FEF2CE2002EC5C4 /* test.dylib in Resources */ = {isa = PBXBuildFile; fileRef = BC5CA4941FEF2CE1002EC5C4 /* test.dylib */; };
 		BC8B64C41FE5252F00EDF749 /* fun_objc.m in Sources */ = {isa = PBXBuildFile; fileRef = BC8B64C31FE5252F00EDF749 /* fun_objc.m */; };
-		BC8EE46C1FE272CF00402F32 /* fun.c in Sources */ = {isa = PBXBuildFile; fileRef = BC8EE46A1FE272CF00402F32 /* fun.c */; };
+		BC8EE46C1FE272CF00402F32 /* fun.m in Sources */ = {isa = PBXBuildFile; fileRef = BC8EE46A1FE272CF00402F32 /* fun.m */; };
 		BC8EE46F1FE2B4E800402F32 /* patchfinder64.c in Sources */ = {isa = PBXBuildFile; fileRef = BC8EE46D1FE2B4E800402F32 /* patchfinder64.c */; };
-		BC9969021FE6659C00A4EDB9 /* test_fsigned.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC9969011FE6659C00A4EDB9 /* test_fsigned.plist */; };
 		BC9969041FE66CE200A4EDB9 /* ent.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC9969031FE66CE200A4EDB9 /* ent.plist */; };
-		BCEEF6EF1FE88FE6009B9A8B /* test_fsigned in Resources */ = {isa = PBXBuildFile; fileRef = BCEEF6EE1FE88FE6009B9A8B /* test_fsigned */; };
+		BCC91E911FEDF6320007F99B /* inject_amfid in Resources */ = {isa = PBXBuildFile; fileRef = BCC91E901FEDF6310007F99B /* inject_amfid */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,17 +63,16 @@
 		B0F5AA3E1FDE87E80073FD88 /* early_kalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = early_kalloc.h; sourceTree = "<group>"; };
 		BC329AE31FE775500069AB3F /* fun_utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fun_utils.c; sourceTree = "<group>"; };
 		BC329AE41FE775500069AB3F /* fun_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fun_utils.h; sourceTree = "<group>"; };
-		BC71C3741FE60FF0004C7C42 /* bootstrap.dmg */ = {isa = PBXFileReference; lastKnownFileType = file; path = bootstrap.dmg; sourceTree = "<group>"; };
-		BC863EDF1FE783D500ED45A6 /* launchctl */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = launchctl; sourceTree = "<group>"; };
+		BC5CA4911FEF288B002EC5C4 /* amfid_payload.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = amfid_payload.dylib; sourceTree = "<group>"; };
+		BC5CA4941FEF2CE1002EC5C4 /* test.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = test.dylib; sourceTree = "<group>"; };
 		BC8B64C31FE5252F00EDF749 /* fun_objc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = fun_objc.m; sourceTree = "<group>"; };
 		BC8B64C51FE5253B00EDF749 /* fun_objc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fun_objc.h; sourceTree = "<group>"; };
-		BC8EE46A1FE272CF00402F32 /* fun.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fun.c; sourceTree = "<group>"; };
+		BC8EE46A1FE272CF00402F32 /* fun.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = fun.m; sourceTree = "<group>"; };
 		BC8EE46B1FE272CF00402F32 /* fun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fun.h; sourceTree = "<group>"; };
 		BC8EE46D1FE2B4E800402F32 /* patchfinder64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = patchfinder64.c; sourceTree = "<group>"; };
 		BC8EE46E1FE2B4E800402F32 /* patchfinder64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = patchfinder64.h; sourceTree = "<group>"; };
-		BC9969011FE6659C00A4EDB9 /* test_fsigned.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = test_fsigned.plist; sourceTree = "<group>"; };
 		BC9969031FE66CE200A4EDB9 /* ent.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ent.plist; sourceTree = "<group>"; };
-		BCEEF6EE1FE88FE6009B9A8B /* test_fsigned */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = test_fsigned; sourceTree = "<group>"; };
+		BCC91E901FEDF6310007F99B /* inject_amfid */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = inject_amfid; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,11 +105,9 @@
 		B07A023B1FB09B6F0018ACE5 /* async_wake_ios */ = {
 			isa = PBXGroup;
 			children = (
-				BC71C3741FE60FF0004C7C42 /* bootstrap.dmg */,
+				BCEEF6F01FE8F09E009B9A8B /* binaries */,
 				B07A023C1FB09B6F0018ACE5 /* AppDelegate.h */,
 				B07A023D1FB09B6F0018ACE5 /* AppDelegate.m */,
-				BCEEF6EE1FE88FE6009B9A8B /* test_fsigned */,
-				BC9969011FE6659C00A4EDB9 /* test_fsigned.plist */,
 				B04E250A1FCF083A00F09CCE /* arm64_state.h */,
 				B07A02451FB09B6F0018ACE5 /* Assets.xcassets */,
 				B07A02521FB09C3D0018ACE5 /* async_wake.c */,
@@ -142,15 +139,24 @@
 			path = async_wake_ios;
 			sourceTree = "<group>";
 		};
+		BCEEF6F01FE8F09E009B9A8B /* binaries */ = {
+			isa = PBXGroup;
+			children = (
+				BCC91E901FEDF6310007F99B /* inject_amfid */,
+				BC5CA4911FEF288B002EC5C4 /* amfid_payload.dylib */,
+				BC5CA4941FEF2CE1002EC5C4 /* test.dylib */,
+			);
+			path = binaries;
+			sourceTree = "<group>";
+		};
 		BCF206541FE32E1D0081CBE5 /* the_fun_part */ = {
 			isa = PBXGroup;
 			children = (
-				BC863EDF1FE783D500ED45A6 /* launchctl */,
 				BC8B64C51FE5253B00EDF749 /* fun_objc.h */,
 				BC8B64C31FE5252F00EDF749 /* fun_objc.m */,
 				BC329AE31FE775500069AB3F /* fun_utils.c */,
 				BC329AE41FE775500069AB3F /* fun_utils.h */,
-				BC8EE46A1FE272CF00402F32 /* fun.c */,
+				BC8EE46A1FE272CF00402F32 /* fun.m */,
 				BC8EE46B1FE272CF00402F32 /* fun.h */,
 				BC8EE46D1FE2B4E800402F32 /* patchfinder64.c */,
 				BC8EE46E1FE2B4E800402F32 /* patchfinder64.h */,
@@ -216,14 +222,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC9969021FE6659C00A4EDB9 /* test_fsigned.plist in Resources */,
 				B0D79D621FDED41000B4F233 /* README in Resources */,
+				BC5CA4951FEF2CE2002EC5C4 /* test.dylib in Resources */,
 				BC9969041FE66CE200A4EDB9 /* ent.plist in Resources */,
-				BCEEF6EF1FE88FE6009B9A8B /* test_fsigned in Resources */,
 				B07A02491FB09B6F0018ACE5 /* LaunchScreen.storyboard in Resources */,
+				BC5CA4931FEF288E002EC5C4 /* amfid_payload.dylib in Resources */,
+				BCC91E911FEDF6320007F99B /* inject_amfid in Resources */,
 				B07A02461FB09B6F0018ACE5 /* Assets.xcassets in Resources */,
 				B07A02441FB09B6F0018ACE5 /* Main.storyboard in Resources */,
-				BC863EE01FE783D500ED45A6 /* launchctl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,7 +243,7 @@
 				B003EB351FC583CB00C58441 /* kmem.c in Sources */,
 				B0EF11171FCC784B00C1D14E /* symbols.c in Sources */,
 				B07A02411FB09B6F0018ACE5 /* ViewController.m in Sources */,
-				BC8EE46C1FE272CF00402F32 /* fun.c in Sources */,
+				BC8EE46C1FE272CF00402F32 /* fun.m in Sources */,
 				B04E25091FCD6DB300F09CCE /* kutils.c in Sources */,
 				BC8B64C41FE5252F00EDF749 /* fun_objc.m in Sources */,
 				B07A024C1FB09B6F0018ACE5 /* main.m in Sources */,
@@ -390,7 +396,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/async_wake_ios/the_fun_part",
+					"$(PROJECT_DIR)/async_wake_ios/binaries",
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -414,7 +420,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/async_wake_ios/the_fun_part",
+					"$(PROJECT_DIR)/async_wake_ios/binaries",
 				);
 				OTHER_LDFLAGS = (
 					"-framework",

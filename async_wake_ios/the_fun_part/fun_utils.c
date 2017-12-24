@@ -36,6 +36,8 @@ uint8_t *get_code_directory(const char* name) {
 	
 	FILE* fd = fopen(name, "r");
 	
+	printf("%s\n", name);
+	
 	struct mach_header_64 mh;
 	fread(&mh, sizeof(struct mach_header_64), 1, fd);
 	
