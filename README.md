@@ -1,17 +1,18 @@
 Fun additions to async_wake
 
-Original patchfinder64 by xerub, additions of current gadgets + fix for allproc by ninjaprawn
-
-Currently implemented:
-- setuid(0) - no panic
-- KCALL - call kernel functions given an address and up to six arguments
+Features:
+- setuid(0) with no kernel panic
 - mount / as rw
-- amfi bypass? well, run unsigned code (temporary until i figure out a master process which gives everyone everything with the right entitlements etc.) - only really used to get the amfi**d** patch
-- amfi**d** patch
+- AMFI bypass using the disliked technique of "stuffing the trust cache", which you can read more about in *OS Internals Vol 3 , page 145 - by no other than Jonathan Levin himself!
+- amfid patch - utilises the AMFI bypass to inject into amfid and replace MISValidateSignatureAndCopyInfo with our own version
 
 Planned:
-- Basic dylib injection into running process without needing com.apple.private.skip-library-validation (probs not possible without the entitlement)
+- Basic dylib injection into running process
 
-If libproc.h doesn't exist, delete the line
-
-Please don't rip off any code from fun.m, or my additions to the patchfinder. If you do, please credit me (@theninjaprawn)
+Credits:
+- Ian Beer for the original exploit
+- @xerub for the KPPless patches
+- @s1guza for the base of the kexecute idea of modifying the vtable of a user client (which I used before I noticed Ian Beer includes it), and the resolving of the upper 4 bytes of memory addresses returned from kexecute
+- @ninjaprawn for amfid patch
+- @coolstarorg for doing the cooler stuff (see his fork https://github.com/coolstar/async_awake-fun - he's got a jailbreakd daemon + more)
+- @stek29, @nullriver
