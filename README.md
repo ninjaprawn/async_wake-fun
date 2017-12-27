@@ -1,4 +1,4 @@
-Fun additions to async_await
+Fun additions to async_wake
 
 Original patchfinder64 by xerub, additions of current gadgets + fix for allproc by ninjaprawn
 
